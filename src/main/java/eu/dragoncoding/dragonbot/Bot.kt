@@ -20,25 +20,43 @@ import kotlin.system.exitProcess
 
 object Bot {
     private val logger: Logger = LoggerFactory.getLogger(Bot::class.java)
-    val timer: Timer = Timer(false)
+    private val timer: Timer = Timer(false)
     lateinit var shardMan: ShardManager
         private set
 
-    fun startUp() {
+
+    /**
+     * This function starts the bot. It's the complete startup.
+     *
+     * @return Returns the time the bot needed for startup (in ms)
+     */
+    fun startUp(): Long {
+        val startTime = System.currentTimeMillis()
+
         shardMan = createShardManager()
         awaitJdaReady()
 
         runConsoleListener()
 
         timer.scheduleAtFixedRate(BotMessage(), 0L, 10 * 60 * 1000)
+
+        return System.currentTimeMillis() - startTime
     }
-    fun shutDown() {
+
+    /**
+     * This function stops the bot. It's the complete shutdown.
+     *
+     * @return Returns the time the bot needed for shutdown (in ms)
+     */
+    fun shutDown(): Long {
+        val startTime = System.currentTimeMillis()
+
         shardMan.setStatus(OnlineStatus.OFFLINE)
         shardMan.shutdown()
 
         timer.cancel()
 
-        logger.info("Bot successfully shut down!")
+        return System.currentTimeMillis() - startTime
     }
 
 
@@ -63,7 +81,6 @@ object Bot {
                 logger.error("Error whilst startup: ", e)
             }
         })
-        logger.info("Bot started successfully!")
     }
     private fun runConsoleListener() {
         val consoleListener = Thread {

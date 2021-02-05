@@ -1,0 +1,5 @@
+# Project exclude paths
+/target/
+/Logs
+/Logs/
+/Logs/log.html
