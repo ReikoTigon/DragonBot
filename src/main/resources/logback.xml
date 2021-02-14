@@ -8,7 +8,7 @@
         </filter>
         <encoder>
             <pattern>
-                %-12([%thread]) - %-25(%d{dd.MM.yyyy HH:mm:ss.SSS}) %n%highlight(%-5level) %cyan(%C)[ln.%line] %n->%msg %n
+                %n%-8([%thread]) - %-25(%d{dd.MM.yyyy HH:mm:ss}) %n%highlight(%-5level) %cyan(%logger{5})[ln.%line] %n->%msg %n
             </pattern>
         </encoder>
     </appender>
@@ -36,9 +36,9 @@
 
     <!-- put all packages of non interesting output here -->
     <logger name="net.dv8tion.jda" level="warn" />
-    <logger name="org.hibernate" level="warn"/>
+    <logger name="org.hibernate" level="error"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="SYS.OUT" />
         <appender-ref ref="HTML" />
     </root>
