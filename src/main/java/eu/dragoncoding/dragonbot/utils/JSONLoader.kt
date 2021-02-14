@@ -15,6 +15,14 @@ object JSONLoader {
     private val logger = LoggerFactory.getLogger(JSONLoader::class.java)
     val token: String
         get() = getJsonAttribute("token")
+    val dbUser: String
+        get() = getJsonAttribute("dbUser")
+    val dbPassword: String
+        get() = getJsonAttribute("dbPassword")
+    val dbUrl: String
+        get() = getJsonAttribute("dbUrl")
+    val dbName: String
+        get() = getJsonAttribute("dbName")
 
     private fun getJsonAttribute(attribute: String): String {
         val jsonParser = JSONParser()
