@@ -1,9 +1,13 @@
 package eu.dragoncoding.dragonbot
 
+import eu.dragoncoding.dragonbot.hibernate.HibernateUtils
+import eu.dragoncoding.dragonbot.listeners.GuildListener
+import eu.dragoncoding.dragonbot.managers.GuildManager
 import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import eu.dragoncoding.dragonbot.utils.JSONLoader
 import eu.dragoncoding.dragonbot.utils.tasks.BotMessage
+import eu.dragoncoding.dragonbot.utils.tasks.StatCollector
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import net.dv8tion.jda.api.OnlineStatus
 import javax.security.auth.login.LoginException
@@ -28,17 +32,21 @@ object Bot {
     /**
      * This function starts the bot. It's the complete startup.
      *
-     * @return Returns the time the bot needed for startup (in ms)
+     * @return the time the bot needed for startup (in ms)
      */
     fun startUp(): Long {
         val startTime = System.currentTimeMillis()
 
-        shardMan = createShardManager()
-        awaitJdaReady()
+        shardMan = createShardManager() //open the connection to discord
+        awaitJdaReady()                 //Wait until all Shards are ready
 
-        runConsoleListener()
+        HibernateUtils.getFactory() //Connect to DB
+        loadDatabaseData() //Load guilds
+
+        runConsoleListener()            //Start the listener for console commands
 
         timer.scheduleAtFixedRate(BotMessage(), 0L, 10 * 60 * 1000)
+        timer.scheduleAtFixedRate(StatCollector(), 0L, 60 * 60 * 1000)
 
         return System.currentTimeMillis() - startTime
     }
@@ -46,7 +54,7 @@ object Bot {
     /**
      * This function stops the bot. It's the complete shutdown.
      *
-     * @return Returns the time the bot needed for shutdown (in ms)
+     * @return the time the bot needed for shutdown (in ms)
      */
     fun shutDown(): Long {
         val startTime = System.currentTimeMillis()
@@ -55,6 +63,8 @@ object Bot {
         shardMan.shutdown()
 
         timer.cancel()
+
+        HibernateUtils.shutdown()
 
         return System.currentTimeMillis() - startTime
     }
@@ -66,6 +76,10 @@ object Bot {
             val builder = DefaultShardManagerBuilder.create(JSONLoader.token, Intents)
             builder.disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS)
             builder.setStatus(OnlineStatus.ONLINE)
+
+            //EventListeners
+            builder.addEventListeners(GuildListener())
+
             shardMan = builder.build()
         } catch (e: LoginException) {
             logger.error("Error whilst connecting to Discord", e)
@@ -81,6 +95,11 @@ object Bot {
                 logger.error("Error whilst startup: ", e)
             }
         })
+    }
+    private fun loadDatabaseData() {
+        for (guild in shardMan.guilds) {
+            GuildManager.getGuild(guild.idLong)
+        }
     }
     private fun runConsoleListener() {
         val consoleListener = Thread {
