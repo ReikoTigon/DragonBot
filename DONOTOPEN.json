@@ -1,5 +1,9 @@
 [
 	{
-		"token": "TOKEN_HERE"
+		"token": "TOKEN_HERE",
+		"dbUser": "DB_USER",
+		"dbPassword": "DB_PASSWORD",
+		"dbUrl": "DB_URL",
+		"dbName": "DB_NAME"
 	}
 ]
