@@ -1,6 +1,7 @@
 @file:JvmName("Const")
 package eu.dragoncoding.dragonbot
 
+import eu.dragoncoding.dragonbot.utils.JSONLoader
 import net.dv8tion.jda.api.requests.GatewayIntent
 import java.awt.Color
 import java.util.*
@@ -25,6 +26,7 @@ var Intents: EnumSet<GatewayIntent> = EnumSet.of(GatewayIntent.GUILD_MEMBERS,
 //Console
 const val checkCmd = ""
 const val exitCmd = "exit"
+const val restartCmd = "restart"
 
 const val checkResponse = "Still Working"
 const val unknownResponse = "Unknown Command:"
@@ -36,7 +38,9 @@ const val urlAttributes = "?autoReconnect=true" +  "&useUnicode=true" + "&charac
 const val defaultPrefix = "-"
 const val defaultChannelID = -1L
 
-const val providedBy = "provided by Dragoncoding"
+const val codingGroup = "DragonCoding"
+const val providedBy = "provided by $codingGroup"
+
 const val undefinedError = "Undefined Message"
 
 val colorDefault = Color(0x09a3eb)
@@ -46,18 +50,16 @@ val colorError = Color(0xFF0000)
 const val titleInfo = "INFO"
 const val titleError = "ERROR"
 
-const val contactDiscord = "Reiko Tigon#1337"
+var botChannelTopic = "The default Channel to manage the bot. " +
+                      "\n(Can be renamed. Please don't delete it.) " +
+                      "\nIssues with the bot? Message me: ${JSONLoader.contactDiscord}"
 
-const val botChannelTopic = "The default Channel to manage the bot. " +
-                            "\n(Can be renamed. Please don't delete it.) " +
-                            "\nIssues with the bot? Message me: $contactDiscord"
-
-const val botHelloMessage = "I'm DragonBot. A bot capable of various tasks. \n" +
-                            " \n" +
-                            "See '#d startup' to get some Instructions on how to work with me. \n" +
-                            "See '#d help' to get some help :D \n" +
-                            " \n" +
-                            "Issues with the bot? Message me: $contactDiscord"
+var botHelloMessage = "I'm DragonBot. A bot capable of various tasks. \n" +
+                      " \n" +
+                      "See '#d startup' to get some Instructions on how to work with me. \n" +
+                      "See '#d help' to get some help :D \n" +
+                      " \n" +
+                      "Issues with the bot? Message me: ${JSONLoader.contactDiscord}"
 
 const val botChannelInfo = "This is the channel I will send information to. \n" +
                            "This also the only channel you can configure me trough, \n" +
@@ -65,3 +67,6 @@ const val botChannelInfo = "This is the channel I will send information to. \n" 
                            "Please restrict access to this channel by roles, so nobody without permission can configure me ;) \n" +
                            " \n" +
                            "If you accidentally delete this channel you can always use '#d restore' to recreate all structures needed by the bot."
+
+const val maxSongsInQueue = 300
+const val maxSongsInHistory = 50

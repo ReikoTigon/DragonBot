@@ -8,7 +8,7 @@
         </filter>
         <encoder>
             <pattern>
-                %n%-8([%thread]) - %-25(%d{dd.MM.yyyy HH:mm:ss}) %n%highlight(%-5level) %cyan(%logger{5})[ln.%line] %n->%msg %n
+                %-8([%thread]) - %-25(%d{dd.MM.yyyy HH:mm:ss}) %n%highlight(%-5level) %cyan(%logger{5})[ln.%line] %n-> %msg %n%n
             </pattern>
         </encoder>
     </appender>
@@ -34,11 +34,48 @@
         <append>true</append>
     </appender>
 
+    <appender name="StatConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
+        <encoder>
+            <pattern>
+                %msg %n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="StatFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}stats.txt</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
+        <encoder>
+            <pattern>%msg %n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${log.path}%d{yyyy-MM-dd}/stats_%i.txt.zip</fileNamePattern>
+            <!-- each file should be at most 50MB -->
+            <maxFileSize>50MB</maxFileSize>
+        </rollingPolicy>
+        <append>true</append>
+    </appender>
+
     <!-- put all packages of non interesting output here -->
     <logger name="net.dv8tion.jda" level="warn" />
     <logger name="org.hibernate" level="error"/>
+    <logger name="com.sedmelluq" level="error"/>
 
-    <root level="INFO">
+
+    <logger name="statsConsole" level="INFO"  additivity="false">
+        <appender-ref ref="StatConsole" />
+    </logger>
+    <logger name="statsFile" level="INFO"  additivity="false">
+        <appender-ref ref="StatFile" />
+    </logger>
+
+    <root level="Debug">
         <appender-ref ref="SYS.OUT" />
         <appender-ref ref="HTML" />
     </root>

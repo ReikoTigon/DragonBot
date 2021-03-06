@@ -5,6 +5,7 @@ import eu.dragoncoding.dragonbot.structures.CriteriaPackage;
 import eu.dragoncoding.dragonbot.structures.Entity;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.JDBCConnectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -229,6 +230,8 @@ public class EntityDao {
                 retry = reconnect(retries, logger);
 
                 retries++;
+            } catch (JDBCConnectionException e2) {
+                retry = true;
             } catch (Exception e) {
                 retry = false;
                 logger.error(e.getMessage(), e);

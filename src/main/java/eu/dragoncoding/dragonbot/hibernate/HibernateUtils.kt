@@ -1,19 +1,20 @@
 package eu.dragoncoding.dragonbot.hibernate
 
 import eu.dragoncoding.dragonbot.hibernate.entities.DGuild
+import eu.dragoncoding.dragonbot.hibernate.entities.GChannels
+import eu.dragoncoding.dragonbot.hibernate.entities.GSettings
 import eu.dragoncoding.dragonbot.urlAttributes
 import eu.dragoncoding.dragonbot.utils.JSONLoader.dbName
+import eu.dragoncoding.dragonbot.utils.JSONLoader.dbPassword
 import eu.dragoncoding.dragonbot.utils.JSONLoader.dbUrl
 import eu.dragoncoding.dragonbot.utils.JSONLoader.dbUser
-import eu.dragoncoding.dragonbot.utils.JSONLoader.dbPassword
 import org.hibernate.SessionFactory
-import org.hibernate.cfg.Environment
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.hibernate.cfg.Configuration
+import org.hibernate.cfg.Environment
 import org.hibernate.service.ServiceRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.lang.Exception
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -41,6 +42,8 @@ object HibernateUtils {
 
             //Add classes to map here!
             mappedClasses.add(DGuild::class.java)
+            mappedClasses.add(GSettings::class.java)
+            mappedClasses.add(GChannels::class.java)
 
             sessionFactory = createSessionFactory(dbName, mappedClasses)
             return sessionFactory
