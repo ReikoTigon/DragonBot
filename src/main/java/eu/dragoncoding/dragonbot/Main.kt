@@ -1,30 +1,41 @@
 package eu.dragoncoding.dragonbot
 
-import eu.dragoncoding.dragonbot.utils.TimeUtils.convertFromLongToTimeString
+import eu.dragoncoding.dragonbot.utils.TimeUtils.longToTimeStringMs
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.jvm.JvmStatic
-
-
+import java.io.IOException
+import kotlin.system.exitProcess
 
 
 object Main {
 
     private var logger: Logger
     var shutDown = false
+    var restart = false
 
     @JvmStatic
     fun main(args: Array<String>) {
 
         val startUpTime = Bot.startUp()
-        logger.info("Bot started successfully! Startup time: ${convertFromLongToTimeString(startUpTime)}")
+        logger.info("Bot started successfully! Startup time: ${longToTimeStringMs(startUpTime)}")
 
-        while (!shutDown) {
+        while (!shutDown && !restart) {
             Thread.sleep(1000L)
         }
 
+        if (restart) {
+            try {
+                val response: String = Bot.restart()
+                logger.info(response)
+            } catch (e: IOException) {
+                logger.error(e.message, e)
+            }
+        }
+
         val shutDownTime = Bot.shutDown()
-        logger.info("Bot successfully shut down! Shutdown time: ${convertFromLongToTimeString(shutDownTime)}")
+        logger.info("Bot successfully shut down! Shutdown time: ${longToTimeStringMs(shutDownTime)}")
+
+        exitProcess(0)
     }
 
 

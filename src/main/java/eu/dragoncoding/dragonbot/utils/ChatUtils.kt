@@ -1,9 +1,9 @@
 package eu.dragoncoding.dragonbot.utils
 
 import eu.dragoncoding.dragonbot.*
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.TextChannel
 import java.awt.Color
-import net.dv8tion.jda.api.EmbedBuilder
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -32,7 +32,7 @@ object ChatUtils {
      * @author DragonCoding
      * @since 15-05-2020
      */
-    fun sendEmbed(title: String, description: String, channel: TextChannel, deleteAfter: Long, color: Color?) {
+    fun sendEmbed(title: String?, description: String?, channel: TextChannel, deleteAfter: Long, color: Color?) {
         val builder = EmbedBuilder()
         builder.setTitle(title)
         builder.setDescription(description)
@@ -85,7 +85,7 @@ object ChatUtils {
      * @param channel     The Channel the embedded Message should be sent to.
      *
      *
-     * @param wasSuccessful If the command was executed successfull. Declare wether the message is an ERROR or an INFO.
+     * @param wasSuccessful If the command was executed successful. Declare whether the message is an ERROR or an INFO.
      *
      *
      * @author DragonCoding
@@ -120,5 +120,9 @@ object ChatUtils {
     fun sendResponseToDiscord(errorCode: Int, channel: TextChannel, messages: ArrayList<String>) {
         val message = if (messages.size >= errorCode + 1) messages[errorCode] else undefinedError
         sendResponseToDiscord(message, channel, errorCode == 0)
+    }
+
+    fun textToUrlText(text: String, url: String): String {
+        return "[$text]($url)"
     }
 }

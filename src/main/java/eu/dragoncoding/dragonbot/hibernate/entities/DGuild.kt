@@ -1,20 +1,17 @@
 package eu.dragoncoding.dragonbot.hibernate.entities
 
+import eu.dragoncoding.dragonbot.Bot
 import eu.dragoncoding.dragonbot.defaultChannelID
 import eu.dragoncoding.dragonbot.defaultPrefix
 import eu.dragoncoding.dragonbot.hibernate.EntityDao
 import eu.dragoncoding.dragonbot.managers.GuildManager.removeGuild
-import lombok.Data
-import lombok.NoArgsConstructor
-import org.slf4j.LoggerFactory
+import eu.dragoncoding.dragonbot.managers.music.GuildMusicController
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
-@Data
-@NoArgsConstructor
 @Table(name = "Guilds")
-
-class DGuild: eu.dragoncoding.dragonbot.structures.Entity {
+class DGuild: eu.dragoncoding.dragonbot.structures.Entity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,10 +24,20 @@ class DGuild: eu.dragoncoding.dragonbot.structures.Entity {
     var prefix: String = defaultPrefix
     @Column(name = "isJoined", nullable = false)
     var isJoined: Boolean = true
-    @Column(name = "botChannelID", nullable = false)
-    var botChannelID: Long = defaultChannelID
     @Column(name = "commandsUsed", nullable = false)
     var commandsUsed: Int = 0
+
+    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @JoinColumn(name = "settings", nullable = false)
+    var settings: GSettings = GSettings()
+
+    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @JoinColumn(name = "channels", nullable = false)
+    var channels: GChannels = GChannels()
+
+
+    @Transient
+    lateinit var musicManager: GuildMusicController
 
     constructor(guild_ID: Long) {
         this.guildID = guild_ID
@@ -40,7 +47,6 @@ class DGuild: eu.dragoncoding.dragonbot.structures.Entity {
     fun save() {
         EntityDao.save(this)
     }
-
     fun update() {
         EntityDao.update(this)
     }
@@ -50,8 +56,23 @@ class DGuild: eu.dragoncoding.dragonbot.structures.Entity {
             isJoined = true
             update()
         }
-    }
 
+        if (channels.botChannelID != defaultChannelID) {
+            val channel = Bot.shardMan.getGuildById(guildID)?.getTextChannelById(channels.botChannelID)
+            if (channel == null) {
+                channels.botChannelID = defaultChannelID
+            }
+        }
+
+        if (channels.musicChannelID != defaultChannelID) {
+            val channel = Bot.shardMan.getGuildById(guildID)?.getTextChannelById(channels.musicChannelID)
+            if (channel == null) {
+                channels.musicChannelID = defaultChannelID
+            }
+        }
+
+        update()
+    }
     fun deactivate() {
         if (isJoined) {
             isJoined = false
@@ -60,15 +81,18 @@ class DGuild: eu.dragoncoding.dragonbot.structures.Entity {
         }
     }
 
-    companion object {
-        private val logger = LoggerFactory.getLogger(DGuild::class.java)
+    fun incrementCommands() {
+        this.commandsUsed += 1
+        update()
+    }
 
+    companion object {
         fun getByGuildID(guild_ID: Long): DGuild? {
             val criteriaPackage = EntityDao.createCriteria(DGuild::class.java)
             val cb = criteriaPackage.criteriaBuilder
             val query = criteriaPackage.query
             val root = criteriaPackage.root
-            query.select(root).where(cb.equal(root.get<Any>("guild_ID"), guild_ID))
+            query.select(root).where(cb.equal(root.get<Any>("guildID"), guild_ID))
 
             return EntityDao.get(DGuild::class.java, query)
         }

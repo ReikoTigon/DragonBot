@@ -2,13 +2,13 @@ package eu.dragoncoding.dragonbot.utils
 
 import eu.dragoncoding.dragonbot.Main.shutDown
 import eu.dragoncoding.dragonbot.jsonPath
-import org.json.simple.parser.JSONParser
-import java.io.File
-import java.io.FileReader
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
+import org.json.simple.parser.JSONParser
 import org.json.simple.parser.ParseException
 import org.slf4j.LoggerFactory
+import java.io.File
+import java.io.FileReader
 import java.io.IOException
 
 object JSONLoader {
@@ -23,6 +23,12 @@ object JSONLoader {
         get() = getJsonAttribute("dbUrl")
     val dbName: String
         get() = getJsonAttribute("dbName")
+    val inviteLink: String
+        get() = getJsonAttribute("inviteLink")
+    val discordLink: String
+        get() = getJsonAttribute("discordLink")
+    val contactDiscord: String
+        get() = getJsonAttribute("contactDiscord")
 
     private fun getJsonAttribute(attribute: String): String {
         val jsonParser = JSONParser()
