@@ -245,10 +245,10 @@ public class EntityDao {
         boolean retry = true;
 
         switch (timesRetried) {
-            case 0 -> logger.error("Database timeout. First reconnect.");
-            case 1 -> logger.error("Database timeout. Second reconnect.");
-            case 2 -> logger.error("Database timeout. Third and last reconnect.");
-            default -> {
+            case 0:  {logger.error("Database timeout. First reconnect.");}
+            case 1:  {logger.error("Database timeout. Second reconnect.");}
+            case 2:  {logger.error("Database timeout. Third and last reconnect.");}
+            default: {
                 logger.error("Reconnect Failed.");
                 retry = false;
             }

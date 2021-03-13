@@ -28,7 +28,7 @@
             <fileNamePattern>${log.path}%d{yyyy-MM-dd}/error.%i.txt.zip</fileNamePattern>
             <!-- each file should be at most 50MB, keep 30 days worth of history, but at most 2GB -->
             <maxFileSize>50MB</maxFileSize>
-            <maxHistory>30</maxHistory>
+            <maxHistory>10</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
         <append>true</append>

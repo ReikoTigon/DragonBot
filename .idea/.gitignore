@@ -6,7 +6,8 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
-/Logs
+
+
 /Logs/
 /Logs/log.html
-../DONOTOPEN.json
+/DONOTOPEN.json

@@ -16,4 +16,7 @@ class GSettings: eu.dragoncoding.dragonbot.structures.Entity, Serializable {
 
     @Column(name = "deleteCmd", nullable = false)
     var deleteCommands: Boolean = true
+
+    @Column(name = "musicDashboard", nullable = false)
+    var musicDashboard: Boolean = false
 }

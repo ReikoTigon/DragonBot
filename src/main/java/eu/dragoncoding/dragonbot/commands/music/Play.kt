@@ -6,6 +6,7 @@ import eu.dragoncoding.dragonbot.hibernate.entities.DGuild
 import eu.dragoncoding.dragonbot.managers.GuildManager
 import eu.dragoncoding.dragonbot.managers.music.AudioPlayerSearchResult
 import eu.dragoncoding.dragonbot.structures.Command
+import eu.dragoncoding.dragonbot.structures.CommandType
 import eu.dragoncoding.dragonbot.utils.MusicUtils
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.TextChannel
@@ -15,7 +16,7 @@ class Play: Command {
     override val cmdLength: Int = "play".length + 1
     override var errorCode: Int = 0
 
-    override fun performCommand(message: Message, subString: Int) {
+    override fun performCommand(message: Message, subString: Int, type: CommandType) {
         removeMessageIfActivated(message)
 
         val dGuild: DGuild = GuildManager.getGuild(message.guild.idLong)
@@ -39,7 +40,7 @@ class Play: Command {
                     url = "ytsearch: $url"
                 }
 
-                dGuild.channels.tempChannelID_1 = message.channel.idLong
+                dGuild.channels.tempChannelID1 = message.channel.idLong
                 apm.loadItem(url, AudioPlayerSearchResult(dGuild.guildID))
             } else {
                 errorCode = 2 //User not in a VoiceChannel

@@ -7,9 +7,14 @@ class SongQueue(songLimit: Int) {
     private val list: ArrayList<AudioTrack> = ArrayList()
     private val maxSongs: Int = songLimit
 
-    fun offer(track: AudioTrack): Boolean {
+    fun offer(track: AudioTrack, index: Int = -1): Boolean {
         if (list.size < maxSongs) {
-            list.add(track)
+            if (index != -1) {
+                list.add(index, track)
+            } else {
+                list.add(0, track)
+            }
+
         }
 
         return list.size < maxSongs
@@ -23,33 +28,37 @@ class SongQueue(songLimit: Int) {
     }
 
     fun getNextAndRemove(): AudioTrack? {
-        if (list.isNotEmpty()) {
-            return list.removeFirst()
+        return if (list.isNotEmpty()) {
+            list.removeFirst()
         } else {
-            return null
+            null
         }
     }
     fun getNext(): AudioTrack? {
-        if (list.isNotEmpty()) {
-            return list[0]
+        return if (list.isNotEmpty()) {
+            list[0]
         } else {
-            return null
+            null
         }
     }
 
     fun getLastAndRemove(): AudioTrack? {
-        if (list.isNotEmpty()) {
-            return list.removeLast()
+        return if (list.isNotEmpty()) {
+            list.removeLast()
         } else {
-            return null
+            null
         }
     }
     fun getLast(): AudioTrack? {
-        if (list.isNotEmpty()) {
-            return list.last()
+        return if (list.isNotEmpty()) {
+            list.last()
         } else {
-            return null
+            null
         }
+    }
+
+    fun remove(track: AudioTrack) {
+        list.remove(track)
     }
 
     fun hasNext(): Boolean {
@@ -61,6 +70,10 @@ class SongQueue(songLimit: Int) {
         listTemp.addAll(list)
 
         return listTemp
+    }
+
+    fun shuffle() {
+        list.shuffle()
     }
 
     fun clear() {

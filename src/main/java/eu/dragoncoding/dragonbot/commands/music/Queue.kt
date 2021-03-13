@@ -3,6 +3,7 @@ package eu.dragoncoding.dragonbot.commands.music
 import eu.dragoncoding.dragonbot.Bot
 import eu.dragoncoding.dragonbot.hibernate.entities.DGuild
 import eu.dragoncoding.dragonbot.structures.Command
+import eu.dragoncoding.dragonbot.structures.CommandType
 import eu.dragoncoding.dragonbot.utils.ChannelUtils
 import eu.dragoncoding.dragonbot.utils.ChatUtils
 import eu.dragoncoding.dragonbot.utils.SettingUtils
@@ -16,7 +17,7 @@ class Queue: Command {
     override val cmdLength: Int = "queue".length + 1
     override var errorCode: Int = 0
 
-    override fun performCommand(message: Message, subString: Int) {
+    override fun performCommand(message: Message, subString: Int, type: CommandType) {
         removeMessageIfActivated(message)
 
         val dGuild: DGuild = ChannelUtils.getDGuildByMessage(message)
@@ -32,20 +33,21 @@ class Queue: Command {
             }
 
             val info = track.info
-            val description = "Index: $i, Length: ${TimeUtils.longToTimeStringS(info.length)}, ${ChatUtils.textToUrlText("Link", info.uri)}"
+            val title = "$i: ${info.author}"
+            val description = "${ChatUtils.textToUrlText(info.title, info.uri)}\nLength: ${TimeUtils.longToTimeStringS(info.length)}"
 
-            builder.addField(info.title, description, false)
+            builder.addField(title, description, false)
         }
 
 
-        dGuild.channels.tempChannelID_1 = message.textChannel.idLong
+        dGuild.channels.tempChannelID1 = message.textChannel.idLong
 
         if (SettingUtils.checkNowPlaying(dGuild)) {
             val guild: Guild = Bot.shardMan.getGuildById(dGuild.guildID)!!
             var channel: TextChannel? = guild.getTextChannelById(dGuild.channels.musicChannelID)
 
             if (channel == null) {
-                channel = guild.getTextChannelById(dGuild.channels.tempChannelID_1)!!
+                channel = guild.getTextChannelById(dGuild.channels.tempChannelID1)!!
             }
 
             ChatUtils.sendEmbed(builder, channel, 0L, null)

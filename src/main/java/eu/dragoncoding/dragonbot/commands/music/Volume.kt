@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import eu.dragoncoding.dragonbot.Bot
 import eu.dragoncoding.dragonbot.hibernate.entities.DGuild
 import eu.dragoncoding.dragonbot.structures.Command
+import eu.dragoncoding.dragonbot.structures.CommandType
 import eu.dragoncoding.dragonbot.utils.ChannelUtils
 import eu.dragoncoding.dragonbot.utils.ChatUtils
 import eu.dragoncoding.dragonbot.utils.MusicUtils
@@ -14,7 +15,7 @@ class Volume: Command {
     override val cmdLength: Int = "volume".length + 1
     override var errorCode: Int = 0
 
-    override fun performCommand(message: Message, subString: Int) {
+    override fun performCommand(message: Message, subString: Int, type: CommandType) {
         removeMessageIfActivated(message)
 
         val dGuild: DGuild = ChannelUtils.getDGuildByMessage(message)
@@ -24,7 +25,7 @@ class Volume: Command {
 
         errorCode = MusicUtils.isInMusicVoiceChannel(message.member, player)
         if (errorCode == 0) {
-            dGuild.channels.tempChannelID_1 = message.channel.idLong
+            dGuild.channels.tempChannelID1 = message.channel.idLong
 
             if (args.isNotEmpty()) {
                 val amount: Int = if (args.isNotEmpty()) { args[0].toInt() } else { player.volume }
@@ -53,6 +54,22 @@ class Volume: Command {
     private fun setVolume(volume: Int, dGuild: DGuild, textChannel: TextChannel, player: AudioPlayer) {
         player.volume = volume
         Bot.shardMan.getGuildById(dGuild.guildID)!!.selfMember.mute(volume == 0).queue()
-        ChatUtils.sendEmbed("Volume", volume.toString(), textChannel, 10L, null)
+
+        if (dGuild.musicManager.hasDashboard()) {
+            dGuild.musicManager.dashboard!!.updateVolume()
+        } else {
+            ChatUtils.sendEmbed("Volume", volume.toString(), textChannel, 5L, null)
+        }
+    }
+
+    companion object {
+        fun setVolume(volume: Int, dGuild: DGuild) {
+            dGuild.musicManager.audioPlayer.volume = volume
+            Bot.shardMan.getGuildById(dGuild.guildID)!!.selfMember.mute(volume == 0).queue()
+
+            if (dGuild.musicManager.hasDashboard()) {
+                dGuild.musicManager.dashboard!!.updateVolume()
+            }
+        }
     }
 }

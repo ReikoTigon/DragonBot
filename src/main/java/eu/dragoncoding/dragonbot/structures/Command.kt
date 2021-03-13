@@ -1,3 +1,5 @@
+@file:Suppress("LiftReturnOrAssignment", "LiftReturnOrAssignment")
+
 package eu.dragoncoding.dragonbot.structures
 
 import eu.dragoncoding.dragonbot.utils.SettingUtils
@@ -8,7 +10,7 @@ interface Command {
 
     val cmdLength: Int
     var errorCode: Int
-    fun performCommand(message: Message, subString: Int)
+    fun performCommand(message: Message, subString: Int, type: CommandType)
     fun response(channel: TextChannel)
 
     fun removeMessageIfActivated(message: Message) {
@@ -18,6 +20,12 @@ interface Command {
     }
 
     fun getArgs(message: Message, subString: Int): List<String> {
-        return message.contentRaw.substring(subString).split(" ".toRegex())
+        return if (message.contentRaw.length < subString) {
+            message.contentRaw.substring(subString - 1).split(" ".toRegex())
+        } else {
+            message.contentRaw.substring(subString).split(" ".toRegex())
+        }
+
+
     }
 }

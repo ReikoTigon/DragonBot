@@ -70,3 +70,5 @@ const val botChannelInfo = "This is the channel I will send information to. \n" 
 
 const val maxSongsInQueue = 300
 const val maxSongsInHistory = 50
+
+val dashboardReactions = arrayOf("🔉", "🔊", "🔄", "🔀", "⏹", "⏮", "⏸", "⏭", "🔁", "🔂", "❓")

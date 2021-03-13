@@ -4,6 +4,7 @@ import eu.dragoncoding.dragonbot.Bot
 import eu.dragoncoding.dragonbot.hibernate.entities.DGuild
 import eu.dragoncoding.dragonbot.managers.GuildManager
 import eu.dragoncoding.dragonbot.structures.Command
+import eu.dragoncoding.dragonbot.structures.CommandType
 import eu.dragoncoding.dragonbot.utils.ChannelUtils
 import eu.dragoncoding.dragonbot.utils.ChatUtils
 import eu.dragoncoding.dragonbot.utils.SettingUtils
@@ -16,7 +17,7 @@ class Settings: Command {
     override val cmdLength: Int = "settings".length + 1
     override var errorCode: Int = 0
 
-    override fun performCommand(message: Message, subString: Int) {
+    override fun performCommand(message: Message, subString: Int, type: CommandType) {
         removeMessageIfActivated(message)
 
 
@@ -46,7 +47,7 @@ class Settings: Command {
             if (temp != null) {
                 npChannel = temp.asMention
             } else {
-                temp = ChannelUtils.getTextChannelFromDGuild(dGuild, dGuild.channels.tempChannelID_1)
+                temp = ChannelUtils.getTextChannelFromDGuild(dGuild, dGuild.channels.tempChannelID1)
                 npChannel = temp?.asMention ?: "N/A"
             }
         }
