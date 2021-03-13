@@ -1,5 +1,6 @@
 package eu.dragoncoding.dragonbot.listeners
 
+import eu.dragoncoding.dragonbot.managers.CommandExecutor
 import eu.dragoncoding.dragonbot.managers.CommandExecutor.performGuildCmd
 import eu.dragoncoding.dragonbot.managers.CommandExecutor.performPrivateCmd
 import eu.dragoncoding.dragonbot.managers.GuildManager.getGuild
@@ -29,12 +30,45 @@ class TextListener : ListenerAdapter() {
     }
 
     private fun onGuildMessage(guild_ID: Long, message: Message) {
-        val guild = getGuild(guild_ID)
-        val isBotChannel = message.textChannel.idLong == guild.channels.botChannelID
-        performGuildCmd(guild, message, if (isBotChannel) CommandType.BOTCHANNEL else CommandType.NORMAL)
+        val dGuild = getGuild(guild_ID)
+
+        if (message.textChannel.idLong == dGuild.channels.dashboardChannelID) {
+            if (message.member!!.idLong != message.guild.selfMember.idLong) {
+                if (isNoCommandOrInvalid(message, dGuild.prefix)) {
+                    message.delete().queue()
+                    return
+                }
+            }
+        }
+
+        val cmdType = when (message.textChannel.idLong) {
+            dGuild.channels.botChannelID -> CommandType.BOTCHANNEL
+            dGuild.channels.dashboardChannelID -> CommandType.DASHBOARD
+            else -> CommandType.NORMAL
+        }
+
+        performGuildCmd(dGuild, message, cmdType)
     }
 
     private fun onPrivateMessage(message: Message) {
         performPrivateCmd(message)
+    }
+    private fun isNoCommandOrInvalid(message: Message, prefix: String): Boolean {
+        val prefix = CommandExecutor.startsWithPrefix(message.contentDisplay, prefix)
+
+        if (prefix != -1) {
+            if (message.contentDisplay.length > prefix) {
+
+                val command = message.contentDisplay.substring(prefix).split(" ".toRegex())[0].toLowerCase()
+
+                if (CommandExecutor.isCommand(command)) {
+                    if (CommandExecutor.validateCommand(CommandType.DASHBOARD, command, message) == 0) {
+                        return false
+                    }
+                }
+            }
+        }
+
+        return true
     }
 }

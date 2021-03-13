@@ -1,7 +1,6 @@
 package eu.dragoncoding.dragonbot.managers
 
-import eu.dragoncoding.dragonbot.commands.management.MusicChannel
-import eu.dragoncoding.dragonbot.commands.management.Settings
+import eu.dragoncoding.dragonbot.commands.management.*
 import eu.dragoncoding.dragonbot.commands.music.*
 import eu.dragoncoding.dragonbot.commands.utilities.BotInfo
 import eu.dragoncoding.dragonbot.commands.utilities.Clear
@@ -15,12 +14,12 @@ object CommandManager {
 
     private val commands: ConcurrentHashMap<String, Command> = ConcurrentHashMap<String, Command>()
 
-    fun perform(command: String, message: Message, subString: Int) {
+    fun perform(command: String, message: Message, subString: Int, type: CommandType) {
         val serverCommand: Command
         if (commands[command.toLowerCase()] != null) {
 
             serverCommand = commands[command.toLowerCase()]!!
-            serverCommand.performCommand(message, subString)
+            serverCommand.performCommand(message, subString, type)
         }
     }
 
@@ -31,18 +30,22 @@ object CommandManager {
         addCommand("botinfo", BotInfo(), CommandType.NORMAL, CommandType.BOTCHANNEL, CommandType.PRIVATE)
 
         //Management Commands
+        addCommand("botchannel", BotChannel(), CommandType.NORMAL, CommandType.BOTCHANNEL)
         addCommand("settings", Settings(), CommandType.BOTCHANNEL)
         addCommand("musicchannel", MusicChannel(), CommandType.BOTCHANNEL)
-        addCommand("botchannel", MusicChannel(), CommandType.NORMAL, CommandType.BOTCHANNEL)
+        addCommand("dashboard", Dashboard(), CommandType.BOTCHANNEL)
+        addCommand("nowplaying", SNowPlaying(), CommandType.BOTCHANNEL)
+        addCommand("deletecommands", SDeleteCommands(), CommandType.BOTCHANNEL)
 
 
         //Music Commands
-        addCommand("play", Play(), CommandType.NORMAL)
-        addCommand("stop", Stop(), CommandType.NORMAL)
-        addCommand("skip", Skip(), CommandType.NORMAL)
-        addCommand("queue", Queue(), CommandType.NORMAL)
-        addCommand("volume", Volume(), CommandType.NORMAL)
-        addCommand("pause", Pause(), CommandType.NORMAL)
+        addCommand("play", Play(), CommandType.NORMAL, CommandType.DASHBOARD)
+        addCommand("stop", Stop(), CommandType.NORMAL, CommandType.DASHBOARD)
+        addCommand("skip", Skip(), CommandType.NORMAL, CommandType.DASHBOARD)
+        addCommand("queue", Queue(), CommandType.NORMAL, CommandType.DASHBOARD)
+        addCommand("volume", Volume(), CommandType.NORMAL, CommandType.DASHBOARD)
+        addCommand("pause", Pause(), CommandType.NORMAL, CommandType.DASHBOARD)
+        addCommand("last", Last(), CommandType.NORMAL, CommandType.DASHBOARD)
     }
 
     fun getCommandList(): List<String> {
@@ -56,7 +59,7 @@ object CommandManager {
                 CommandType.NORMAL -> CommandExecutor.addNormalCommand(cmd)
                 CommandType.BOTCHANNEL -> CommandExecutor.addConfigCommand(cmd)
                 CommandType.PRIVATE -> CommandExecutor.addPrivateCommand(cmd)
-                else -> {}
+                CommandType.DASHBOARD -> CommandExecutor.addDashboardCommand(cmd)
             }
         }
     }

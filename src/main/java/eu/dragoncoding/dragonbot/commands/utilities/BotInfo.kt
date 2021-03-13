@@ -4,6 +4,7 @@ import eu.dragoncoding.dragonbot.Bot
 import eu.dragoncoding.dragonbot.codingGroup
 import eu.dragoncoding.dragonbot.hibernate.entities.DGuild
 import eu.dragoncoding.dragonbot.structures.Command
+import eu.dragoncoding.dragonbot.structures.CommandType
 import eu.dragoncoding.dragonbot.utils.ChatUtils
 import eu.dragoncoding.dragonbot.utils.JSONLoader
 import net.dv8tion.jda.api.EmbedBuilder
@@ -15,12 +16,12 @@ class BotInfo: Command {
     override val cmdLength: Int = "botinfo".length + 1
     override var errorCode: Int = 0
 
-    override fun performCommand(message: Message, subString: Int) {
+    override fun performCommand(message: Message, subString: Int, type: CommandType) {
         removeMessageIfActivated(message)
 
         val botName = Bot.shardMan.getGuildById(message.guild.idLong)!!.selfMember.effectiveName
         val ping: Long = getPing(message.channel)
-        val author = "$codingGroup - ${JSONLoader.contactDiscord}"
+        val author = "$codingGroup (${JSONLoader.contactDiscord})"
         val inviteLink = JSONLoader.inviteLink
         val supportDiscord = JSONLoader.discordLink
         val joinedGuilds = DGuild.getAllActive().size
@@ -32,7 +33,7 @@ class BotInfo: Command {
         builder.setTitle("About me")
         builder.setDescription("Hey, I am $botName!\n\n" +
                                "My current ping to this server is: ${ping}ms\n" +
-                               "There ${if (b) "are" else "is"} $joinedGuilds other ${if (b) "Discords" else "Discord"} I am currently on.\n" +
+                               "There ${if (b) "are" else "is"} $joinedGuilds ${if (b) "Discords" else "Discord"} I am currently on.\n" +
                                "Together you already typed $totalCommandsUsed Commands to me.\n\n" +
                                "I was created by $author. (You can find him on ${ChatUtils.textToUrlText(codingGroup, supportDiscord)})\n" +
                                "If you think I am good enough for your Discord invite me with this ${ChatUtils.textToUrlText("link", inviteLink)}\n" +

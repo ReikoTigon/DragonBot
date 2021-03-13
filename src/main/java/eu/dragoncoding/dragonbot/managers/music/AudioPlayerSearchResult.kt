@@ -16,19 +16,28 @@ class AudioPlayerSearchResult(private val guildID: Long) : AudioLoadResultHandle
     }
 
     override fun playlistLoaded(playlist: AudioPlaylist) {
+        val dGuild = getGuild(guildID)
+
         if (playlist.isSearchResult) {
             singleTrack(playlist.tracks[0])
         } else {
-             val dGuild = getGuild(guildID)
-
             for (track in playlist.tracks) {
                 dGuild.musicManager.queueHandler.addSong(track)
             }
+        }
+
+        if (dGuild.musicManager.hasDashboard()) {
+            dGuild.musicManager.dashboard!!.updateQueue()
         }
     }
 
     override fun trackLoaded(track: AudioTrack) {
         singleTrack(track)
+
+        val dGuild = getGuild(guildID)
+        if (dGuild.musicManager.hasDashboard()) {
+            dGuild.musicManager.dashboard!!.updateQueue()
+        }
     }
 
     private fun singleTrack(track: AudioTrack) {

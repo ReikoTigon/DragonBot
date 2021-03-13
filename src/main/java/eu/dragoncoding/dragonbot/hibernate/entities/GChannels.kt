@@ -18,8 +18,11 @@ class GChannels: eu.dragoncoding.dragonbot.structures.Entity, Serializable {
     @Column(name = "nowPlaying", nullable = false)
     var musicChannelID: Long = defaultChannelID
 
+    @Column(name = "dashboard", nullable = false)
+    var dashboardChannelID: Long = defaultChannelID
 
-    @Transient var tempChannelID_1: Long = defaultChannelID //Music
+
+    @Transient var tempChannelID1: Long = defaultChannelID //Music
 //    @Transient var tempChannelID_2: Long = defaultChannelID //XY
 //    @Transient var tempChannelID_3: Long = defaultChannelID //XY
 //    @Transient var tempChannelID_4: Long = defaultChannelID //XY

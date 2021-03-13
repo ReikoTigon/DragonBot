@@ -2,9 +2,11 @@ package eu.dragoncoding.dragonbot.utils
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import eu.dragoncoding.dragonbot.Bot
+import eu.dragoncoding.dragonbot.colorError
 import eu.dragoncoding.dragonbot.hibernate.entities.DGuild
 import eu.dragoncoding.dragonbot.managers.GuildManager
 import net.dv8tion.jda.api.entities.*
+import java.util.*
 
 object MusicUtils {
     /**
@@ -68,6 +70,13 @@ object SettingUtils {
     fun checkDeleteCmd(guildID: Long): Boolean {
         return GuildManager.getGuild(guildID).settings.deleteCommands
     }
+
+    fun checkMusicDashboard(dGuild: DGuild): Boolean {
+        return dGuild.settings.musicDashboard
+    }
+    fun checkMusicDashboard(guildID: Long): Boolean {
+        return GuildManager.getGuild(guildID).settings.musicDashboard
+    }
 }
 
 object ChannelUtils {
@@ -79,5 +88,56 @@ object ChannelUtils {
 
     fun getDGuildByMessage(message: Message): DGuild {
         return GuildManager.getGuild(message.guild.idLong)
+    }
+}
+
+object DashboardUtils {
+    fun onStartUp() {
+        for (guild in Bot.shardMan.guilds) {
+            val dGuild = GuildManager.getGuild(guild.idLong)
+
+            if (dGuild.musicManager.hasDashboard()) {
+                dGuild.musicManager.dashboard!!.setIdle()
+            }
+        }
+    }
+    fun onShutDown() {
+        for (guild in Bot.shardMan.guilds) {
+            val dGuild = GuildManager.getGuild(guild.idLong)
+
+            if (dGuild.musicManager.hasDashboard()) {
+                val channel = dGuild.musicManager.dashboard!!.dashboardChannel
+
+                if (channel != null) {
+
+                    removeMessages(channel)
+
+                    ChatUtils.sendEmbed("🔴 BOT offline", "Sorry, we're trying to change this state. \n...but the squirrels keep munching on our cables.", channel, 0L, colorError)
+                }
+            }
+        }
+    }
+
+    fun checkIfDashboardExists(dGuild: DGuild): Boolean {
+        val dashboard = dGuild.musicManager.dashboard
+        if (dashboard != null) {
+            val channel = dashboard.dashboardChannel
+
+            if (channel != null) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    fun removeMessages(channel: TextChannel) {
+        val messages: MutableList<Message> = ArrayList()
+
+        for (message in channel.iterableHistory.cache(false)) {
+            messages.add(message)
+        }
+
+        channel.purgeMessages(messages)
     }
 }

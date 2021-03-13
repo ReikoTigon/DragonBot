@@ -6,10 +6,13 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import eu.dragoncoding.dragonbot.hibernate.HibernateUtils
 import eu.dragoncoding.dragonbot.listeners.GuildListener
+import eu.dragoncoding.dragonbot.listeners.ReactionListener
 import eu.dragoncoding.dragonbot.listeners.TextListener
 import eu.dragoncoding.dragonbot.managers.GuildManager
+import eu.dragoncoding.dragonbot.utils.DashboardUtils
 import eu.dragoncoding.dragonbot.utils.JSONLoader
 import eu.dragoncoding.dragonbot.utils.tasks.BotMessage
+import eu.dragoncoding.dragonbot.utils.tasks.DashboardUpdater
 import eu.dragoncoding.dragonbot.utils.tasks.StatCollector
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.OnlineStatus
@@ -50,12 +53,15 @@ object Bot {
 
         setupAudioManager()
 
-        HibernateUtils.getFactory() //Connect to DB
-        loadDatabaseData() //Load guilds
+        HibernateUtils.getFactory()    //Connect to DB
+        loadDatabaseData()             //Load guilds
 
-        runConsoleListener()            //Start the listener for console commands
+        DashboardUtils.onStartUp()     //Init the dashboards
+
+        runConsoleListener()           //Start the listener for console commands
 
         timer.scheduleAtFixedRate(BotMessage(), 0L, 10 * 60 * 1000)
+        timer.scheduleAtFixedRate(DashboardUpdater(), 0L, 2 * 1000)
         timer.scheduleAtFixedRate(StatCollector(), 0L, 60 * 1000)
 
         return System.currentTimeMillis() - startTime
@@ -68,7 +74,9 @@ object Bot {
     fun shutDown(): Long {
         val startTime = System.currentTimeMillis()
 
+
         GuildManager.shutdown()
+        DashboardUtils.onShutDown()
 
         shardMan.setStatus(OnlineStatus.OFFLINE)
         shardMan.shutdown()
@@ -132,6 +140,7 @@ object Bot {
             //EventListeners
             builder.addEventListeners(GuildListener())
             builder.addEventListeners(TextListener())
+            builder.addEventListeners(ReactionListener())
 
             shardMan = builder.build()
         } catch (e: LoginException) {

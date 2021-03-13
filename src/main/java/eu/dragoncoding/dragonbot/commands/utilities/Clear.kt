@@ -1,6 +1,7 @@
 package eu.dragoncoding.dragonbot.commands.utilities
 
 import eu.dragoncoding.dragonbot.structures.Command
+import eu.dragoncoding.dragonbot.structures.CommandType
 import eu.dragoncoding.dragonbot.utils.ChatUtils.sendResponseToDiscord
 import eu.dragoncoding.dragonbot.utils.SettingUtils
 import net.dv8tion.jda.api.Permission
@@ -14,9 +15,9 @@ class Clear: Command {
     override val cmdLength: Int = "clear".length + 1
     override var errorCode: Int = 0
 
-    var amount = 0
+    private var amount = 0
 
-    override fun performCommand(message: Message, subString: Int) {
+    override fun performCommand(message: Message, subString: Int, type: CommandType) {
         if (message.member!!.hasPermission(message.textChannel, Permission.MESSAGE_MANAGE)) {
             val args = getArgs(message, subString + cmdLength)
             if (args.isNotEmpty()) {

@@ -2,6 +2,7 @@ package eu.dragoncoding.dragonbot.commands.management
 
 import eu.dragoncoding.dragonbot.hibernate.entities.DGuild
 import eu.dragoncoding.dragonbot.structures.Command
+import eu.dragoncoding.dragonbot.structures.CommandType
 import eu.dragoncoding.dragonbot.utils.ChannelUtils
 import eu.dragoncoding.dragonbot.utils.ChatUtils
 import net.dv8tion.jda.api.EmbedBuilder
@@ -16,7 +17,7 @@ class MusicChannel: Command {
     //-musicChannel set
     //-musicChannel set #Channel
 
-    override fun performCommand(message: Message, subString: Int) {
+    override fun performCommand(message: Message, subString: Int, type: CommandType) {
         removeMessageIfActivated(message)
 
         val dGuild = ChannelUtils.getDGuildByMessage(message)
@@ -71,7 +72,7 @@ class MusicChannel: Command {
         if (temp != null) {
             channel = temp.asMention
         } else {
-            temp = ChannelUtils.getTextChannelFromDGuild(dGuild, dGuild.channels.tempChannelID_1)
+            temp = ChannelUtils.getTextChannelFromDGuild(dGuild, dGuild.channels.tempChannelID1)
             channel = temp?.asMention ?: "N/A"
         }
 
