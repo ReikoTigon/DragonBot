@@ -1,9 +1,9 @@
 [
 	{
-		"token": "Njk3MTUwNTQ1NTc5ODY4MjUw.XozGCg.m7y45tEon5h6-A_VKU7ypNd-i3A",
-		"dbUser": "dragonBot",
-		"dbPassword": "&j+e^NH,/GR:|%e\\A9'b",
-		"dbUrl": "jdbc:mysql://dragoncoding.eu:3306/",
-		"dbName": "DragonBotTest"
+		"token": "TOKEN_HERE",
+		"dbUser": "DB_USER",
+		"dbPassword": "DB_PASSWORD",
+		"dbUrl": "DB_URL",
+		"dbName": "DB_NAME"
 	}
 ]
